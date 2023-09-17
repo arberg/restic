@@ -160,6 +160,22 @@ specifying a policy (one or more ``--keep-*`` options) for which snapshots to
 keep. You can for example define how many hourly, daily, weekly, monthly and
 yearly snapshots to keep, and any other snapshots will be removed.
 
+The keep options mark some snapshots to be kept. All snapshots that are not
+marked by some keep-policy will be removed. At least one policy must be applied.
+
+The keep options are split into two variants that does basically the same
+(see 2 Notes further down for the time variation). In essence
+``keep-{time frame} n`` keeps only the most recent snapshot within
+the time frame but does so for ``n`` repetitions, and
+``keep-within-{time frame} DURATION`` does the same but instead of ``n``
+repetitions it is specified as a duration like `2y3m15d`. Note that all
+``keep-{time frame}`` are relative to the most recent snapshot, even
+when multiple different keep time frames are applied. The repetitions of
+the ``--keep-*`` syntax are not limited to the specified time frame, so
+``keep-daily 4`` will keep 4 snapshots even if theres only one snapshot
+pr week, whereas ``keep-within-daily 4d`` will only keep 1 snapshot in
+this case of weekly snapshots (see examples further down).
+
 .. warning:: If you use an append-only repository with policy-based snapshot
     removal, some security considerations are important. Please refer to the
     section below for more information.
@@ -207,7 +223,7 @@ The ``forget`` command accepts the following policy options:
     They also only count hours/days/weeks/etc which have one or more snapshots.
     A value of ``-1`` will be interpreted as "forever", i.e. "keep all".
 
-.. note:: All duration related options (``--keep-{within,-*}``) ignore snapshots
+.. note:: All duration related options (``--keep-within-{*}``) ignore snapshots
     with a timestamp in the future (relative to when the ``forget`` command is
     run) and these snapshots will hence not be removed.
 
